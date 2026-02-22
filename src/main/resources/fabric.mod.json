@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "motionreblur",
+  "version": "1.0",
+  "name": "Motion ReBlur",
+  "description": "Motion Blur for Minecraft",
+  "authors": [
+    "winvi"
+  ],
+  "contact": {},
+  "license": "winvi-license",
+  "icon": "winvi.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "ru.motionreblur.MotionReBlur"
+    ]
+  },
+  "mixins": [
+    "motionreblur.mixins.json"
+  ],
+  "accessWidener": "motionreblur.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.17.0",
+    "fabric-api": "*",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "satin": ">=3.0.0-alpha.1"
+  }
+}
