@@ -3,58 +3,58 @@ package ru.motionreblur;
 public class MotionBlurModule {
     private static final MotionBlurModule instance = new MotionBlurModule();
     public final ShaderMotionBlur shader;
-    
+
     private boolean enabled = false;
     private float strength = -0.8f;
     private boolean useRRC = true;
-    private int quality = 2; // 0=Low, 1=Medium, 2=High, 3=Ultra
-    
+    private int quality = 2;
+
     private MotionBlurModule() {
         shader = new ShaderMotionBlur(this);
         shader.registerShaderCallbacks();
     }
-    
+
     public static MotionBlurModule getInstance() {
         return instance;
     }
-    
-    public boolean isEnabled() { 
-        return enabled; 
+
+    public boolean isEnabled() {
+        return enabled;
     }
-    
-    public void setEnabled(boolean enabled) { 
+
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         MotionReBlur.LOGGER.info("Motion Blur " + (enabled ? "enabled" : "disabled"));
     }
-    
-    public float getStrength() { 
-        return strength; 
+
+    public float getStrength() {
+        return strength;
     }
-    
+
     public void setStrength(float strength) {
         this.strength = Math.max(-2.0f, Math.min(2.0f, strength));
         shader.updateBlurStrength(this.strength);
         MotionReBlur.LOGGER.info("Motion Blur strength set to " + this.strength);
     }
-    
-    public boolean isUseRRC() { 
-        return useRRC; 
+
+    public boolean isUseRRC() {
+        return useRRC;
     }
-    
-    public void setUseRRC(boolean useRRC) { 
+
+    public void setUseRRC(boolean useRRC) {
         this.useRRC = useRRC;
         MotionReBlur.LOGGER.info("Refresh Rate Scaling " + (useRRC ? "enabled" : "disabled"));
     }
-    
+
     public int getQuality() {
         return quality;
     }
-    
+
     public void setQuality(int quality) {
         this.quality = Math.max(0, Math.min(3, quality));
         MotionReBlur.LOGGER.info("Motion Blur quality set to " + getQualityName());
     }
-    
+
     public String getQualityName() {
         return switch (quality) {
             case 0 -> "Низкое";
@@ -64,7 +64,8 @@ public class MotionBlurModule {
             default -> "Среднее";
         };
     }
-    
+
     public enum BlurAlgorithm {BACKWARDS, CENTERED}
+
     public static BlurAlgorithm blurAlgorithm = BlurAlgorithm.CENTERED;
 }

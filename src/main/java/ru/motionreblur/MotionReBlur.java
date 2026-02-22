@@ -11,14 +11,11 @@ public class MotionReBlur implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         LOGGER.info("Motion ReBlur initialized!");
-        
-        // Инициализация модуля
+
         MotionBlurModule.getInstance();
-        
-        // Регистрация команды
+
         MotionBlurCommand.register();
-        
-        // Регистрация клавиши
+
         MotionBlurKeyBinding.register();
     }
 }

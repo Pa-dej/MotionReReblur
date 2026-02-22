@@ -91,25 +91,23 @@ public class ShaderMotionBlur {
 
     private int getSampleAmountForFPS(float fps) {
         int quality = config.getQuality();
-        
-        // Базовое количество сэмплов в зависимости от качества
+
         int baseSamples = switch (quality) {
-            case 0 -> 8;   // Low
-            case 1 -> 12;  // Medium
-            case 2 -> 16;  // High
-            case 3 -> 24;  // Ultra
+            case 0 -> 8;
+            case 1 -> 12;
+            case 2 -> 16;
+            case 3 -> 24;
             default -> 12;
         };
-        
-        // Адаптация под FPS для лучшей производительности
+
         if (fps < 30) {
             return Math.max(6, baseSamples / 2);
         } else if (fps < 60) {
-            return Math.max(8, (int)(baseSamples * 0.75f));
+            return Math.max(8, (int) (baseSamples * 0.75f));
         } else if (fps > 144) {
-            return Math.min(32, (int)(baseSamples * 1.25f));
+            return Math.min(32, (int) (baseSamples * 1.25f));
         }
-        
+
         return baseSamples;
     }
 

@@ -13,9 +13,12 @@ import ru.motionreblur.MotionBlurModule;
 
 @Mixin(WorldRenderer.class)
 public class MixinLevelRenderer {
-    @Unique private Matrix4f prevModelView = new Matrix4f();
-    @Unique private Matrix4f prevProjection = new Matrix4f();
-    @Unique private Vector3f prevCameraPos = new Vector3f();
+    @Unique
+    private Matrix4f prevModelView = new Matrix4f();
+    @Unique
+    private Matrix4f prevProjection = new Matrix4f();
+    @Unique
+    private Vector3f prevCameraPos = new Vector3f();
 
     @Inject(method = "render", at = @At("HEAD"))
     private void setMatrices(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, Matrix4f positionMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {

@@ -8,15 +8,15 @@ import org.lwjgl.glfw.GLFW;
 
 public class MotionBlurKeyBinding {
     private static KeyBinding openGuiKey;
-    
+
     public static void register() {
         openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.motionreblur.open_gui",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_M,
-            "category.motionreblur"
+                "key.motionreblur.open_gui",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_M,
+                "category.motionreblur"
         ));
-        
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openGuiKey.wasPressed()) {
                 client.setScreen(new MotionBlurConfigScreen(client.currentScreen));
