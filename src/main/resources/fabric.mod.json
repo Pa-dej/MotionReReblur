@@ -25,5 +25,17 @@
     "fabric-api": "*",
     "minecraft": "~1.21.4",
     "java": ">=21"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["client"],
+      "links": {
+        "modmenu.discord": "https://discord.gg/example"
+      }
+    },
+    "iris": {
+      "compatible": true,
+      "note": "Motion Blur works alongside Iris shaders"
+    }
   }
 }

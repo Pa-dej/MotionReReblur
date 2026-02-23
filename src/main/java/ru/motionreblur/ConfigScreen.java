@@ -117,6 +117,21 @@ public class ConfigScreen extends Screen {
                 0x808080
         );
 
+        // Показываем информацию если Iris активен
+        if (IrisCompat.areShadersEnabled()) {
+            String shaderPack = IrisCompat.getCurrentShaderPackName();
+            String irisInfo = shaderPack != null 
+                ? "§aIris: " + shaderPack
+                : "§aIris shaders активны";
+            context.drawCenteredTextWithShadow(
+                    this.textRenderer,
+                    Text.literal(irisInfo),
+                    this.width / 2,
+                    this.height / 2 + 95,
+                    0x55FF55
+            );
+        }
+        
         if (mb.isEnabled()) {
             String hint = "Двигайте камеру, чтобы увидеть эффект";
             context.drawCenteredTextWithShadow(

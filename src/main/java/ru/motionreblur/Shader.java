@@ -1,7 +1,6 @@
 package ru.motionreblur;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
@@ -57,11 +56,16 @@ public class Shader {
         if (config.getStrength() == 0 || !config.isEnabled()) {
             return false;
         }
-        if (FabricLoader.getInstance().isModLoaded("iris")) {
-            MotionReBlur.LOGGER.warn("Motion Blur cannot work with Iris Shaders!");
-            config.setEnabled(false);
-            return false;
+        
+        // Motion blur работает вместе с Iris
+        // Логируем только для информации
+        if (IrisCompat.isIrisActive()) {
+            String shaderPack = IrisCompat.getCurrentShaderPackName();
+            if (shaderPack != null) {
+                MotionReBlur.LOGGER.debug("Motion Blur working alongside Iris shader pack: " + shaderPack);
+            }
         }
+        
         return true;
     }
 
