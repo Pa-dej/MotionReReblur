@@ -8,10 +8,6 @@ import net.minecraft.text.Text;
 
 public class MotionBlurConfigScreen extends Screen {
     private final Screen parent;
-    private SliderWidget strengthSlider;
-    private ButtonWidget toggleButton;
-    private ButtonWidget rrcButton;
-    private ButtonWidget qualityButton;
 
     public MotionBlurConfigScreen(Screen parent) {
         super(Text.literal("Motion ReBlur Settings"));
@@ -25,7 +21,7 @@ public class MotionBlurConfigScreen extends Screen {
         int centerX = this.width / 2;
         int startY = this.height / 2 - 60;
 
-        toggleButton = ButtonWidget.builder(
+        ButtonWidget toggleButton = ButtonWidget.builder(
                 Text.literal("Motion Blur: " + (mb.isEnabled() ? "§aВКЛ" : "§cВЫКЛ")),
                 button -> {
                     mb.setEnabled(!mb.isEnabled());
@@ -33,7 +29,7 @@ public class MotionBlurConfigScreen extends Screen {
                 }
         ).dimensions(centerX - 100, startY, 200, 20).build();
 
-        strengthSlider = new SliderWidget(
+        SliderWidget strengthSlider = new SliderWidget(
                 centerX - 100, startY + 30, 200, 20,
                 Text.literal("Сила: " + String.format("%.1f", mb.getStrength())),
                 (mb.getStrength() + 2.0) / 4.0
@@ -51,7 +47,7 @@ public class MotionBlurConfigScreen extends Screen {
             }
         };
 
-        rrcButton = ButtonWidget.builder(
+        ButtonWidget rrcButton = ButtonWidget.builder(
                 Text.literal("Адаптация к частоте монитора: " + (mb.isUseRRC() ? "§aВКЛ" : "§cВЫКЛ")),
                 button -> {
                     mb.setUseRRC(!mb.isUseRRC());
@@ -59,7 +55,7 @@ public class MotionBlurConfigScreen extends Screen {
                 }
         ).dimensions(centerX - 100, startY + 60, 200, 20).build();
 
-        qualityButton = ButtonWidget.builder(
+        ButtonWidget qualityButton = ButtonWidget.builder(
                 Text.literal("Качество: " + mb.getQualityName()),
                 button -> {
                     int newQuality = (mb.getQuality() + 1) % 4;

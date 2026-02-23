@@ -1,9 +1,10 @@
 package ru.motionreblur;
 
-import net.minecraft.client.MinecraftClient;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
+
+import static ru.motionreblur.MotionReBlur.mc;
 
 public class MonitorInfoProvider {
     private static long lastMonitorHandle = 0;
@@ -18,14 +19,15 @@ public class MonitorInfoProvider {
         }
         lastCheckTime = now;
 
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.getWindow() == null) return;
+        if (mc == null || mc.getWindow() == null) return;
 
-        long window = client.getWindow().getHandle();
+        long window = mc.getWindow().getHandle();
         long monitor = GLFW.glfwGetWindowMonitor(window);
 
         if (monitor == 0) {
-            monitor = getMonitorFromWindowPosition(window, client.getWindow().getWidth(), client.getWindow().getHeight());
+            monitor = getMonitorFromWindowPosition(window,
+                    mc.getWindow().getWidth(),
+                    mc.getWindow().getHeight());
         }
 
         if (monitor != lastMonitorHandle) {

@@ -6,43 +6,42 @@ import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
+
+import static ru.motionreblur.MotionReBlur.mc;
 
 public class MotionBlurCommand {
 
     public static void register() {
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-            registerCommand(dispatcher);
-        });
+        ClientCommandRegistrationCallback.EVENT.register(
+                (dispatcher,
+                 registryAccess) -> registerCommand(dispatcher)
+        );
     }
 
     private static void registerCommand(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("motionreblur")
-                .executes(ctx -> openGui(ctx))
+                .executes(MotionBlurCommand::openGui)
                 .then(ClientCommandManager.literal("on")
-                        .executes(ctx -> enable(ctx)))
+                        .executes(MotionBlurCommand::enable))
                 .then(ClientCommandManager.literal("off")
-                        .executes(ctx -> disable(ctx)))
+                        .executes(MotionBlurCommand::disable))
                 .then(ClientCommandManager.literal("toggle")
-                        .executes(ctx -> toggle(ctx)))
+                        .executes(MotionBlurCommand::toggle))
                 .then(ClientCommandManager.literal("strength")
                         .then(ClientCommandManager.argument("value", FloatArgumentType.floatArg(-2.0f, 2.0f))
                                 .executes(ctx -> setStrength(ctx, FloatArgumentType.getFloat(ctx, "value")))))
                 .then(ClientCommandManager.literal("rrc")
-                        .executes(ctx -> toggleRRC(ctx)))
+                        .executes(MotionBlurCommand::toggleRRC))
                 .then(ClientCommandManager.literal("status")
-                        .executes(ctx -> showStatus(ctx)))
+                        .executes(MotionBlurCommand::showStatus))
                 .then(ClientCommandManager.literal("help")
-                        .executes(ctx -> showHelp(ctx)))
+                        .executes(MotionBlurCommand::showHelp))
         );
     }
 
     private static int openGui(CommandContext<FabricClientCommandSource> ctx) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        client.execute(() -> {
-            client.setScreen(new MotionBlurConfigScreen(null));
-        });
+        mc.execute(() -> mc.setScreen(new MotionBlurConfigScreen(null)));
         ctx.getSource().sendFeedback(Text.literal("§aОткрываю меню настроек..."));
         return 1;
     }

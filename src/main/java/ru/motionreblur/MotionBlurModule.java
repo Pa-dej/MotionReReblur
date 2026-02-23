@@ -64,8 +64,4 @@ public class MotionBlurModule {
             default -> "Среднее";
         };
     }
-
-    public enum BlurAlgorithm {BACKWARDS, CENTERED}
-
-    public static BlurAlgorithm blurAlgorithm = BlurAlgorithm.CENTERED;
 }

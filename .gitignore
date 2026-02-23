@@ -1,4 +1,5 @@
-# Исключенные пути проекта
+run/
+
 /.gradle/
 /build/
 /build/classes/java/main/

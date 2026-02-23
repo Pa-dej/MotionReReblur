@@ -2,12 +2,13 @@ package ru.motionreblur;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.ladysnake.satin.api.managed.ManagedShaderEffect;
 import org.ladysnake.satin.api.managed.ShaderEffectManager;
+
+import static ru.motionreblur.MotionReBlur.mc;
 
 public class ShaderMotionBlur {
     private final MotionBlurModule config;
@@ -57,8 +58,6 @@ public class ShaderMotionBlur {
     }
 
     private void applyMotionBlur(float deltaTick) {
-        MinecraftClient client = MinecraftClient.getInstance();
-
         MonitorInfoProvider.updateDisplayInfo();
         int displayRefreshRate = MonitorInfoProvider.getRefreshRate();
 
@@ -79,12 +78,12 @@ public class ShaderMotionBlur {
         int halfSampleAmount = sampleAmount / 2;
         float invSamples = 1.0f / sampleAmount;
 
-        motionBlurShader.setUniformValue("view_res", (float) client.getFramebuffer().viewportWidth, (float) client.getFramebuffer().viewportHeight);
-        motionBlurShader.setUniformValue("view_pixel_size", 1.0f / client.getFramebuffer().viewportWidth, 1.0f / client.getFramebuffer().viewportHeight);
+        motionBlurShader.setUniformValue("view_res", (float) mc.getFramebuffer().viewportWidth, (float) mc.getFramebuffer().viewportHeight);
+        motionBlurShader.setUniformValue("view_pixel_size", 1.0f / mc.getFramebuffer().viewportWidth, 1.0f / mc.getFramebuffer().viewportHeight);
         motionBlurShader.setUniformValue("motionBlurSamples", sampleAmount);
         motionBlurShader.setUniformValue("halfSamples", halfSampleAmount);
         motionBlurShader.setUniformValue("inverseSamples", invSamples);
-        motionBlurShader.setUniformValue("blurAlgorithm", MotionBlurModule.BlurAlgorithm.CENTERED.ordinal());
+        motionBlurShader.setUniformValue("blurAlgorithm", 1);
 
         motionBlurShader.render(deltaTick);
     }
@@ -105,7 +104,7 @@ public class ShaderMotionBlur {
         } else if (fps < 60) {
             return Math.max(8, (int) (baseSamples * 0.75f));
         } else if (fps > 144) {
-            return Math.min(32, (int) (baseSamples * 1.25f));
+            return (int) (baseSamples * 1.25f);
         }
 
         return baseSamples;
