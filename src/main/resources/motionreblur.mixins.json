@@ -3,6 +3,7 @@
   "minVersion": "0.8",
   "package": "ru.motionreblur.mixin",
   "compatibilityLevel": "JAVA_21",
+  "priority": 1100,
   "client": [
     "GameRendererAccessor",
     "MixinGameRenderer",
