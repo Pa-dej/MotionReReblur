@@ -1,10 +1,11 @@
 package ru.motionreblur;
 
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.ladysnake.satin.api.event.ShaderEffectRenderCallback;
 import org.ladysnake.satin.api.managed.ManagedShaderEffect;
 import org.ladysnake.satin.api.managed.ShaderEffectManager;
 
@@ -27,10 +28,11 @@ public class ShaderMotionBlur {
     private float currentFPS = 0.0f;
 
     public void registerShaderCallbacks() {
-        WorldRenderEvents.END.register(context -> {
+        // Используем ShaderEffectRenderCallback вместо WorldRenderEvents.END
+        // Это событие вызывается в правильный момент для post-process шейдеров
+        ShaderEffectRenderCallback.EVENT.register(tickDelta -> {
             long now = System.nanoTime();
             float deltaTime = (now - lastNano) / 1_000_000_000.0f;
-            float deltaTick = deltaTime * 20.0f;
             lastNano = now;
 
             if (deltaTime > 0 && deltaTime < 1.0f) {
@@ -40,7 +42,7 @@ public class ShaderMotionBlur {
             }
 
             if (shouldRenderMotionBlur()) {
-                applyMotionBlur(deltaTick);
+                applyMotionBlur(tickDelta);
             }
         });
     }
@@ -86,6 +88,14 @@ public class ShaderMotionBlur {
         motionBlurShader.setUniformValue("blurAlgorithm", 1);
 
         motionBlurShader.render(deltaTick);
+
+        // Восстанавливаем полное состояние рендеринга после применения шейдера
+        // Satin's render() отключает depth test для post-process, нужно восстановить
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthFunc(515); // GL_LEQUAL - стандартная функция глубины в Minecraft
+        RenderSystem.depthMask(true); // Разрешаем запись в depth buffer
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc(); // Восстанавливаем стандартное смешивание
     }
 
     private int getSampleAmountForFPS(float fps) {
