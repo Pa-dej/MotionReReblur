@@ -2,6 +2,7 @@ package ru.motionreblur;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -33,8 +34,7 @@ public class Shader {
     }
 
     public void registerShaderCallbacks() {
-        // Используем ShaderEffectRenderCallback вместо WorldRenderEvents.END
-        // Это событие вызывается в правильный момент для post-process шейдеров
+        // Обновляем FPS для адаптивного качества
         ShaderEffectRenderCallback.EVENT.register(tickDelta -> {
             long now = System.nanoTime();
             float deltaTime = (now - lastNano) / 1_000_000_000.0f;
@@ -45,11 +45,14 @@ public class Shader {
             } else {
                 currentFPS = 0.0f;
             }
-
-            if (shouldRenderMotionBlur()) {
-                applyMotionBlur(tickDelta);
-            }
         });
+    }
+    
+    public void applyMotionBlurIfNeeded() {
+        if (shouldRenderMotionBlur()) {
+            // Используем фиксированный deltaTick для плавности
+            applyMotionBlur(1.0f);
+        }
     }
 
     private boolean shouldRenderMotionBlur() {
@@ -65,6 +68,8 @@ public class Shader {
     }
 
     private void applyMotionBlur(float deltaTick) {
+        MinecraftClient client = MinecraftClient.getInstance();
+
         MonitorInfoProvider.updateDisplayInfo();
         int displayRefreshRate = MonitorInfoProvider.getRefreshRate();
 
@@ -83,7 +88,7 @@ public class Shader {
 
         int sampleAmount = getSampleAmountForFPS(currentFPS);
 
-        motionBlurShader.setUniformValue("view_res", (float) mc.getFramebuffer().viewportWidth, (float) mc.getFramebuffer().viewportHeight);
+        motionBlurShader.setUniformValue("view_res", (float) client.getFramebuffer().viewportWidth, (float) client.getFramebuffer().viewportHeight);
         motionBlurShader.setUniformValue("motionBlurSamples", sampleAmount);
         motionBlurShader.setUniformValue("halfSamples", sampleAmount / 2);
         motionBlurShader.setUniformValue("inverseSamples", 1.0f / sampleAmount);
