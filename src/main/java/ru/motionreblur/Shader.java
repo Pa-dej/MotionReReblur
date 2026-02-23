@@ -6,7 +6,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.ladysnake.satin.api.event.ShaderEffectRenderCallback;
 import org.ladysnake.satin.api.managed.ManagedShaderEffect;
 import org.ladysnake.satin.api.managed.ShaderEffectManager;
 
@@ -34,24 +33,23 @@ public class Shader {
     }
 
     public void registerShaderCallbacks() {
-        // Обновляем FPS для адаптивного качества
-        ShaderEffectRenderCallback.EVENT.register(tickDelta -> {
-            long now = System.nanoTime();
-            float deltaTime = (now - lastNano) / 1_000_000_000.0f;
-            lastNano = now;
-
-            if (deltaTime > 0 && deltaTime < 1.0f) {
-                currentFPS = 1.0f / deltaTime;
-            } else {
-                currentFPS = 0.0f;
-            }
-        });
+        // Motion blur применяется через MixinGameRenderer перед рендерингом рук
+        // Это гарантирует правильный depth test и отсутствие blur на руках
     }
     
-    public void applyMotionBlurIfNeeded() {
+    public void applyMotionBlurBeforeHands() {
+        long now = System.nanoTime();
+        float deltaTime = (now - lastNano) / 1_000_000_000.0f;
+        lastNano = now;
+
+        if (deltaTime > 0 && deltaTime < 1.0f) {
+            currentFPS = 1.0f / deltaTime;
+        } else {
+            currentFPS = 0.0f;
+        }
+
         if (shouldRenderMotionBlur()) {
-            // Используем фиксированный deltaTick для плавности
-            applyMotionBlur(1.0f);
+            applyMotionBlur(0.0f); // tickDelta не используется в текущей реализации
         }
     }
 
@@ -93,6 +91,7 @@ public class Shader {
         motionBlurShader.setUniformValue("halfSamples", sampleAmount / 2);
         motionBlurShader.setUniformValue("inverseSamples", 1.0f / sampleAmount);
         motionBlurShader.setUniformValue("blurAlgorithm", 1); // 1 = centered blur
+        motionBlurShader.setUniformValue("handDepthThreshold", config.getHandDepthThreshold());
 
         motionBlurShader.render(deltaTick);
         

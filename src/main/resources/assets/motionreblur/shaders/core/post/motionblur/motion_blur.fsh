@@ -14,6 +14,7 @@ uniform mat4 prevProjection;
 uniform int motionBlurSamples;
 uniform int halfSamples;
 uniform int blurAlgorithm;
+uniform float handDepthThreshold;
 in vec2 texCoord;
 layout(location = 0) out vec4 color;
 
@@ -43,6 +44,15 @@ void main() {
     ivec2 texel = ivec2(gl_FragCoord.xy);
 
     float depth = texelFetch(MainDepthSampler, texel, 0).x;
+    
+    // Исключаем руки из размытия
+    // Руки рендерятся с depth близким к 0 (очень близко к камере)
+    // Используем настраиваемый порог для точной настройки
+    if (depth < handDepthThreshold) {
+        color = texture(MainSampler, texCoord);
+        return;
+    }
+    
     vec2 velocity = texCoord - reproject(vec3(texCoord, depth)).xy;
     velocity = clampLength(velocity);
 

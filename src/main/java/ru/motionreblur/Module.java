@@ -8,6 +8,7 @@ public class Module {
     private float strength = -0.8f;
     private boolean useRRC = true;
     private int quality = 2;
+    private float handDepthThreshold = 0.56f;
 
     private Module() {
         shader = new Shader(this);
@@ -63,5 +64,14 @@ public class Module {
             case 3 -> "Ультра";
             default -> "Среднее";
         };
+    }
+
+    public float getHandDepthThreshold() {
+        return handDepthThreshold;
+    }
+
+    public void setHandDepthThreshold(float threshold) {
+        this.handDepthThreshold = Math.max(0.0f, Math.min(1.0f, threshold));
+        MotionReBlur.LOGGER.info("Hand depth threshold set to " + this.handDepthThreshold);
     }
 }

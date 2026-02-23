@@ -64,15 +64,32 @@ public class ConfigScreen extends Screen {
                 }
         ).dimensions(centerX - 100, startY + 90, 200, 20).build();
 
+        SliderWidget handThresholdSlider = new SliderWidget(
+                centerX - 100, startY + 120, 200, 20,
+                Text.literal("Порог глубины рук: " + String.format("%.2f", mb.getHandDepthThreshold())),
+                mb.getHandDepthThreshold()
+        ) {
+            @Override
+            protected void updateMessage() {
+                this.setMessage(Text.literal("Порог глубины рук: " + String.format("%.2f", this.value)));
+            }
+
+            @Override
+            protected void applyValue() {
+                mb.setHandDepthThreshold((float) this.value);
+            }
+        };
+
         ButtonWidget doneButton = ButtonWidget.builder(
                 Text.translatable("gui.done"),
                 button -> this.close()
-        ).dimensions(centerX - 100, startY + 120, 200, 20).build();
+        ).dimensions(centerX - 100, startY + 150, 200, 20).build();
 
         addDrawableChild(toggleButton);
         addDrawableChild(strengthSlider);
         addDrawableChild(rrcButton);
         addDrawableChild(qualityButton);
+        addDrawableChild(handThresholdSlider);
         addDrawableChild(doneButton);
     }
 
@@ -106,8 +123,17 @@ public class ConfigScreen extends Screen {
                     this.textRenderer,
                     Text.literal(hint),
                     this.width / 2,
-                    this.height / 2 + 95,
+                    this.height / 2 + 110,
                     0x808080
+            );
+            
+            String thresholdHint = "Настройте порог, если руки размываются";
+            context.drawCenteredTextWithShadow(
+                    this.textRenderer,
+                    Text.literal(thresholdHint),
+                    this.width / 2,
+                    this.height / 2 + 125,
+                    0x606060
             );
         }
     }
