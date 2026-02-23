@@ -11,21 +11,26 @@ import org.ladysnake.satin.api.managed.ShaderEffectManager;
 
 import static ru.motionreblur.MotionReBlur.mc;
 
-public class ShaderMotionBlur {
-    private final MotionBlurModule config;
+public class Shader {
+    private final Module config;
     private final ManagedShaderEffect motionBlurShader;
 
-    public ShaderMotionBlur(MotionBlurModule config) {
+    private long lastNano = System.nanoTime();
+    private float currentBlur = 0.0f;
+    private float currentFPS = 0.0f;
+
+    private final Matrix4f tempPrevModelView = new Matrix4f();
+    private final Matrix4f tempPrevProjection = new Matrix4f();
+    private final Matrix4f tempProjInverse = new Matrix4f();
+    private final Matrix4f tempMvInverse = new Matrix4f();
+
+    public Shader(Module config) {
         this.config = config;
         motionBlurShader = ShaderEffectManager.getInstance().manage(
                 Identifier.of(MotionReBlur.MOD_ID, "motion_blur"),
                 shader -> shader.setUniformValue("BlendFactor", config.getStrength())
         );
     }
-
-    private long lastNano = System.nanoTime();
-    private float currentBlur = 0.0f;
-    private float currentFPS = 0.0f;
 
     public void registerShaderCallbacks() {
         // Используем ShaderEffectRenderCallback вместо WorldRenderEvents.END
@@ -77,25 +82,21 @@ public class ShaderMotionBlur {
         }
 
         int sampleAmount = getSampleAmountForFPS(currentFPS);
-        int halfSampleAmount = sampleAmount / 2;
-        float invSamples = 1.0f / sampleAmount;
 
         motionBlurShader.setUniformValue("view_res", (float) mc.getFramebuffer().viewportWidth, (float) mc.getFramebuffer().viewportHeight);
-        motionBlurShader.setUniformValue("view_pixel_size", 1.0f / mc.getFramebuffer().viewportWidth, 1.0f / mc.getFramebuffer().viewportHeight);
         motionBlurShader.setUniformValue("motionBlurSamples", sampleAmount);
-        motionBlurShader.setUniformValue("halfSamples", halfSampleAmount);
-        motionBlurShader.setUniformValue("inverseSamples", invSamples);
-        motionBlurShader.setUniformValue("blurAlgorithm", 1);
+        motionBlurShader.setUniformValue("halfSamples", sampleAmount / 2);
+        motionBlurShader.setUniformValue("inverseSamples", 1.0f / sampleAmount);
+        motionBlurShader.setUniformValue("blurAlgorithm", 1); // 1 = centered blur
 
         motionBlurShader.render(deltaTick);
-
+        
         // Восстанавливаем полное состояние рендеринга после применения шейдера
-        // Satin's render() отключает depth test для post-process, нужно восстановить
         RenderSystem.enableDepthTest();
-        RenderSystem.depthFunc(515); // GL_LEQUAL - стандартная функция глубины в Minecraft
-        RenderSystem.depthMask(true); // Разрешаем запись в depth buffer
+        RenderSystem.depthFunc(515); // GL_LEQUAL
+        RenderSystem.depthMask(true);
         RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc(); // Восстанавливаем стандартное смешивание
+        RenderSystem.defaultBlendFunc();
     }
 
     private int getSampleAmountForFPS(float fps) {
@@ -119,11 +120,6 @@ public class ShaderMotionBlur {
 
         return baseSamples;
     }
-
-    private final Matrix4f tempPrevModelView = new Matrix4f();
-    private final Matrix4f tempPrevProjection = new Matrix4f();
-    private final Matrix4f tempProjInverse = new Matrix4f();
-    private final Matrix4f tempMvInverse = new Matrix4f();
 
     public void setFrameMotionBlur(Matrix4f modelView, Matrix4f prevModelView,
                                    Matrix4f projection, Matrix4f prevProjection,

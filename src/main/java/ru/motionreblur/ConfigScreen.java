@@ -6,17 +6,17 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.text.Text;
 
-public class MotionBlurConfigScreen extends Screen {
+public class ConfigScreen extends Screen {
     private final Screen parent;
 
-    public MotionBlurConfigScreen(Screen parent) {
+    public ConfigScreen(Screen parent) {
         super(Text.literal("Motion ReBlur Settings"));
         this.parent = parent;
     }
 
     @Override
     protected void init() {
-        MotionBlurModule mb = MotionBlurModule.getInstance();
+        Module mb = Module.getInstance();
 
         int centerX = this.width / 2;
         int startY = this.height / 2 - 60;
@@ -89,7 +89,7 @@ public class MotionBlurConfigScreen extends Screen {
                 0xFFFFFF
         );
 
-        MotionBlurModule mb = MotionBlurModule.getInstance();
+        Module mb = Module.getInstance();
         int refreshRate = MonitorInfoProvider.getRefreshRate();
         String info = "Refresh Rate: " + refreshRate + " Hz";
         context.drawCenteredTextWithShadow(

@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 
 import static ru.motionreblur.MotionReBlur.mc;
 
-public class MotionBlurCommand {
+public class Command {
 
     public static void register() {
         ClientCommandRegistrationCallback.EVENT.register(
@@ -21,33 +21,33 @@ public class MotionBlurCommand {
 
     private static void registerCommand(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("motionreblur")
-                .executes(MotionBlurCommand::openGui)
+                .executes(Command::openGui)
                 .then(ClientCommandManager.literal("on")
-                        .executes(MotionBlurCommand::enable))
+                        .executes(Command::enable))
                 .then(ClientCommandManager.literal("off")
-                        .executes(MotionBlurCommand::disable))
+                        .executes(Command::disable))
                 .then(ClientCommandManager.literal("toggle")
-                        .executes(MotionBlurCommand::toggle))
+                        .executes(Command::toggle))
                 .then(ClientCommandManager.literal("strength")
                         .then(ClientCommandManager.argument("value", FloatArgumentType.floatArg(-2.0f, 2.0f))
                                 .executes(ctx -> setStrength(ctx, FloatArgumentType.getFloat(ctx, "value")))))
                 .then(ClientCommandManager.literal("rrc")
-                        .executes(MotionBlurCommand::toggleRRC))
+                        .executes(Command::toggleRRC))
                 .then(ClientCommandManager.literal("status")
-                        .executes(MotionBlurCommand::showStatus))
+                        .executes(Command::showStatus))
                 .then(ClientCommandManager.literal("help")
-                        .executes(MotionBlurCommand::showHelp))
+                        .executes(Command::showHelp))
         );
     }
 
     private static int openGui(CommandContext<FabricClientCommandSource> ctx) {
-        mc.execute(() -> mc.setScreen(new MotionBlurConfigScreen(null)));
+        mc.execute(() -> mc.setScreen(new ConfigScreen(null)));
         ctx.getSource().sendFeedback(Text.literal("§aОткрываю меню настроек..."));
         return 1;
     }
 
     private static int showStatus(CommandContext<FabricClientCommandSource> ctx) {
-        MotionBlurModule mb = MotionBlurModule.getInstance();
+        Module mb = Module.getInstance();
         ctx.getSource().sendFeedback(Text.literal("§7§m                    "));
         ctx.getSource().sendFeedback(Text.literal("§6Motion ReBlur"));
         ctx.getSource().sendFeedback(Text.literal("§7Состояние: " + (mb.isEnabled() ? "§aВКЛ" : "§cВЫКЛ")));
@@ -59,19 +59,19 @@ public class MotionBlurCommand {
     }
 
     private static int enable(CommandContext<FabricClientCommandSource> ctx) {
-        MotionBlurModule.getInstance().setEnabled(true);
+        Module.getInstance().setEnabled(true);
         ctx.getSource().sendFeedback(Text.literal("§aMotion Blur включен"));
         return 1;
     }
 
     private static int disable(CommandContext<FabricClientCommandSource> ctx) {
-        MotionBlurModule.getInstance().setEnabled(false);
+        Module.getInstance().setEnabled(false);
         ctx.getSource().sendFeedback(Text.literal("§cMotion Blur выключен"));
         return 1;
     }
 
     private static int toggle(CommandContext<FabricClientCommandSource> ctx) {
-        MotionBlurModule mb = MotionBlurModule.getInstance();
+        Module mb = Module.getInstance();
         boolean newState = !mb.isEnabled();
         mb.setEnabled(newState);
         ctx.getSource().sendFeedback(Text.literal("§7Motion Blur: " + (newState ? "§aВКЛ" : "§cВЫКЛ")));
@@ -79,13 +79,13 @@ public class MotionBlurCommand {
     }
 
     private static int setStrength(CommandContext<FabricClientCommandSource> ctx, float value) {
-        MotionBlurModule.getInstance().setStrength(value);
+        Module.getInstance().setStrength(value);
         ctx.getSource().sendFeedback(Text.literal("§aСила установлена на §f" + String.format("%.1f", value)));
         return 1;
     }
 
     private static int toggleRRC(CommandContext<FabricClientCommandSource> ctx) {
-        MotionBlurModule mb = MotionBlurModule.getInstance();
+        Module mb = Module.getInstance();
         boolean newState = !mb.isUseRRC();
         mb.setUseRRC(newState);
         ctx.getSource().sendFeedback(Text.literal("§7Адаптация к частоте монитора: " + (newState ? "§aВКЛ" : "§cВЫКЛ")));

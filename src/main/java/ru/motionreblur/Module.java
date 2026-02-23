@@ -1,20 +1,20 @@
 package ru.motionreblur;
 
-public class MotionBlurModule {
-    private static final MotionBlurModule instance = new MotionBlurModule();
-    public final ShaderMotionBlur shader;
+public class Module {
+    private static final Module instance = new Module();
+    public final Shader shader;
 
     private boolean enabled = false;
     private float strength = -0.8f;
     private boolean useRRC = true;
     private int quality = 2;
 
-    private MotionBlurModule() {
-        shader = new ShaderMotionBlur(this);
+    private Module() {
+        shader = new Shader(this);
         shader.registerShaderCallbacks();
     }
 
-    public static MotionBlurModule getInstance() {
+    public static Module getInstance() {
         return instance;
     }
 
@@ -65,3 +65,4 @@ public class MotionBlurModule {
         };
     }
 }
+

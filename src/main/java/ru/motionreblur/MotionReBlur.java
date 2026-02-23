@@ -16,10 +16,10 @@ public class MotionReBlur implements ClientModInitializer {
 
         LOGGER.info("Motion ReBlur initialized!");
 
-        MotionBlurModule.getInstance();
+        Module.getInstance();
 
-        MotionBlurCommand.register();
+        Command.register();
 
-        MotionBlurKeyBinding.register();
+        KeyBinding.register();
     }
 }
