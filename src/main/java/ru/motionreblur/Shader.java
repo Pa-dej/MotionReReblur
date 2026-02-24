@@ -8,8 +8,6 @@ import org.joml.Vector3f;
 import org.ladysnake.satin.api.managed.ManagedShaderEffect;
 import org.ladysnake.satin.api.managed.ShaderEffectManager;
 
-import static ru.motionreblur.MotionReBlur.mc;
-
 public class Shader {
     private final Module config;
     private final ManagedShaderEffect motionBlurShader;
@@ -30,11 +28,6 @@ public class Shader {
                 shader -> shader.setUniformValue("BlendFactor", config.getStrength())
         );
     }
-
-    public void registerShaderCallbacks() {
-        // Motion blur применяется через MixinGameRenderer перед рендерингом рук
-        // Это гарантирует правильный depth test и отсутствие blur на руках
-    }
     
     public void applyMotionBlurBeforeHands() {
         long now = System.nanoTime();
@@ -48,7 +41,7 @@ public class Shader {
         }
 
         if (shouldRenderMotionBlur()) {
-            applyMotionBlur(0.0f); // tickDelta не используется в текущей реализации
+            applyMotionBlur(); // tickDelta не используется в текущей реализации
         }
     }
 
@@ -69,7 +62,7 @@ public class Shader {
         return true;
     }
 
-    private void applyMotionBlur(float deltaTick) {
+    private void applyMotionBlur() {
         MinecraftClient client = MinecraftClient.getInstance();
 
         MonitorInfoProvider.updateDisplayInfo();
@@ -97,7 +90,7 @@ public class Shader {
         motionBlurShader.setUniformValue("blurAlgorithm", 1); // 1 = centered blur
         motionBlurShader.setUniformValue("handDepthThreshold", config.getHandDepthThreshold());
 
-        motionBlurShader.render(deltaTick);
+        motionBlurShader.render((float) 0.0);
         
         // Восстанавливаем полное состояние рендеринга после применения шейдера
         RenderSystem.enableDepthTest();

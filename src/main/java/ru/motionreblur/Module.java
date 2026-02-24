@@ -5,11 +5,11 @@ public class Module {
     public final Shader shader;
     private final Config config;
 
-    private boolean enabled = false;
-    private float strength = -0.8f;
-    private boolean useRRC = true;
-    private int quality = 2;
-    private float handDepthThreshold = 0.56f;
+    private boolean enabled;
+    private float strength;
+    private boolean useRRC;
+    private int quality;
+    private float handDepthThreshold;
 
     private Module() {
         // Загружаем конфиг
@@ -24,7 +24,6 @@ public class Module {
         
         // Теперь создаем shader с уже загруженными настройками
         shader = new Shader(this);
-        shader.registerShaderCallbacks();
     }
 
     public static Module getInstance() {

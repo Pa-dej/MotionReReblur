@@ -7,8 +7,7 @@ import net.fabricmc.loader.api.FabricLoader;
  */
 public class IrisCompat {
     private static Boolean irisLoaded = null;
-    private static Boolean shadersEnabled = null;
-    
+
     /**
      * Проверяет, загружен ли мод Iris
      */
@@ -36,10 +35,8 @@ public class IrisCompat {
             Object config = irisApiClass.getMethod("getConfig").invoke(irisApiInstance);
             
             Class<?> configClass = Class.forName("net.irisshaders.iris.api.v0.IrisApiConfig");
-            boolean enabled = (boolean) configClass.getMethod("areShadersEnabled").invoke(config);
-            
-            shadersEnabled = enabled;
-            return enabled;
+
+            return (boolean) configClass.getMethod("areShadersEnabled").invoke(config);
         } catch (Exception e) {
             // Если не удалось получить статус через API, считаем что шейдеры выключены
             MotionReBlur.LOGGER.debug("Could not check Iris shader status: " + e.getMessage());

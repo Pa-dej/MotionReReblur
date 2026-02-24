@@ -63,17 +63,6 @@ public class Config {
     }
 
     /**
-     * Применяет настройки из конфига к модулю
-     */
-    public void applyTo(Module module) {
-        module.setEnabled(enabled);
-        module.setStrength(strength);
-        module.setUseRRC(useRRC);
-        module.setQuality(quality);
-        module.setHandDepthThreshold(handDepthThreshold);
-    }
-
-    /**
      * Копирует настройки из модуля в конфиг
      */
     public void copyFrom(Module module) {
