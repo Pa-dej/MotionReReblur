@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MotionReBlur implements ClientModInitializer {
-    public static final String MOD_ID = "motionreblur";
+    public static final String MOD_ID = "motion_re_blur";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static MinecraftClient mc;
 

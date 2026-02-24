@@ -11,7 +11,7 @@ base {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/motionreblur.accesswidener")
+    accessWidenerPath = file("src/main/resources/motion_re_blur.accesswidener")
 }
 
 repositories {

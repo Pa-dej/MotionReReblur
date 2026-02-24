@@ -41,7 +41,7 @@ public class Command {
     }
 
     private static int openGui(CommandContext<FabricClientCommandSource> ctx) {
-        mc.execute(() -> mc.setScreen(new ConfigScreen(null)));
+        mc.execute(() -> mc.setScreen(new ConfigScreen(null, mc.options)));
         ctx.getSource().sendFeedback(Text.literal("§aОткрываю меню настроек..."));
         return 1;
     }

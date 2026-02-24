@@ -1,6 +1,6 @@
 {
   "vertex": "minecraft:post/sobel",
-  "fragment": "motionreblur:core/post/motionblur/motion_blur",
+  "fragment": "motion_re_blur:core/post/motionblur/motion_blur",
   "samplers": [
     { "name": "MainSampler" },
     { "name": "MainDepthSampler" }

@@ -10,15 +10,15 @@ public class KeyBinding {
 
     public static void register() {
         openGuiKey = KeyBindingHelper.registerKeyBinding(new net.minecraft.client.option.KeyBinding(
-                "key.motionreblur.open_gui",
+                "key.motion_re_blur.open_gui",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_M,
-                "category.motionreblur"
+                "category.motion_re_blur"
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openGuiKey.wasPressed()) {
-                client.setScreen(new ConfigScreen(client.currentScreen));
+                client.setScreen(new ConfigScreen(client.currentScreen, client.options));
             }
         });
     }

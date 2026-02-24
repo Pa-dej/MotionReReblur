@@ -3,6 +3,7 @@ package ru.motionreblur;
 public class Module {
     private static final Module instance = new Module();
     public final Shader shader;
+    private final Config config;
 
     private boolean enabled = false;
     private float strength = -0.8f;
@@ -11,12 +12,31 @@ public class Module {
     private float handDepthThreshold = 0.56f;
 
     private Module() {
+        // Загружаем конфиг
+        config = Config.load();
+        
+        // Применяем значения напрямую без вызова setters
+        this.enabled = config.enabled;
+        this.strength = config.strength;
+        this.useRRC = config.useRRC;
+        this.quality = config.quality;
+        this.handDepthThreshold = config.handDepthThreshold;
+        
+        // Теперь создаем shader с уже загруженными настройками
         shader = new Shader(this);
         shader.registerShaderCallbacks();
     }
 
     public static Module getInstance() {
         return instance;
+    }
+
+    /**
+     * Сохраняет текущие настройки в конфиг файл
+     */
+    public void saveConfig() {
+        config.copyFrom(this);
+        config.save();
     }
 
     public boolean isEnabled() {
@@ -26,6 +46,7 @@ public class Module {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         MotionReBlur.LOGGER.info("Motion Blur " + (enabled ? "enabled" : "disabled"));
+        saveConfig();
     }
 
     public float getStrength() {
@@ -36,6 +57,7 @@ public class Module {
         this.strength = Math.max(-2.0f, Math.min(2.0f, strength));
         shader.updateBlurStrength(this.strength);
         MotionReBlur.LOGGER.info("Motion Blur strength set to " + this.strength);
+        saveConfig();
     }
 
     public boolean isUseRRC() {
@@ -45,6 +67,7 @@ public class Module {
     public void setUseRRC(boolean useRRC) {
         this.useRRC = useRRC;
         MotionReBlur.LOGGER.info("Refresh Rate Scaling " + (useRRC ? "enabled" : "disabled"));
+        saveConfig();
     }
 
     public int getQuality() {
@@ -54,15 +77,16 @@ public class Module {
     public void setQuality(int quality) {
         this.quality = Math.max(0, Math.min(3, quality));
         MotionReBlur.LOGGER.info("Motion Blur quality set to " + getQualityName());
+        saveConfig();
     }
 
     public String getQualityName() {
         return switch (quality) {
-            case 0 -> "Низкое";
-            case 1 -> "Среднее";
-            case 2 -> "Высокое";
-            case 3 -> "Ультра";
-            default -> "Среднее";
+            case 0 -> "gui.motion_re_blur.quality.low";
+            case 1 -> "gui.motion_re_blur.quality.medium";
+            case 2 -> "gui.motion_re_blur.quality.high";
+            case 3 -> "gui.motion_re_blur.quality.ultra";
+            default -> "gui.motion_re_blur.quality.medium";
         };
     }
 
@@ -73,5 +97,6 @@ public class Module {
     public void setHandDepthThreshold(float threshold) {
         this.handDepthThreshold = Math.max(0.0f, Math.min(1.0f, threshold));
         MotionReBlur.LOGGER.info("Hand depth threshold set to " + this.handDepthThreshold);
+        saveConfig();
     }
 }
