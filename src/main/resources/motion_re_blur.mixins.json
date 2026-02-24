@@ -8,7 +8,9 @@
     "GameRendererAccessor",
     "MixinGameRenderer",
     "MixinLevelRenderer",
-    "MixinOptionsScreen"
+    "MixinOptionsScreen",
+    "PostEffectProcessorAccessor",
+    "ShaderLoaderAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

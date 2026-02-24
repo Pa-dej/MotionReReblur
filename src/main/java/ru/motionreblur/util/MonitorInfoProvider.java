@@ -1,10 +1,9 @@
-package ru.motionreblur;
+package ru.motionreblur.util;
 
+import net.minecraft.client.MinecraftClient;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
-
-import static ru.motionreblur.MotionReBlur.mc;
 
 public class MonitorInfoProvider {
     private static long lastMonitorHandle = 0;
@@ -14,11 +13,10 @@ public class MonitorInfoProvider {
 
     public static void updateDisplayInfo() {
         long now = System.nanoTime();
-        if (now - lastCheckTime < CHECK_INTERVAL_NS) {
-            return;
-        }
+        if (now - lastCheckTime < CHECK_INTERVAL_NS) return;
         lastCheckTime = now;
 
+        MinecraftClient mc = MinecraftClient.getInstance();
         if (mc == null || mc.getWindow() == null) return;
 
         long window = mc.getWindow().getHandle();
@@ -59,11 +57,8 @@ public class MonitorInfoProvider {
                 GLFWVidMode mode = GLFW.glfwGetVideoMode(m);
                 if (mode == null) continue;
 
-                int mw = mode.width();
-                int mh = mode.height();
-
-                if (windowCenterX >= mx[0] && windowCenterX < mx[0] + mw &&
-                        windowCenterY >= my[0] && windowCenterY < my[0] + mh) {
+                if (windowCenterX >= mx[0] && windowCenterX < mx[0] + mode.width() &&
+                        windowCenterY >= my[0] && windowCenterY < my[0] + mode.height()) {
                     monitorResult = m;
                     break;
                 }

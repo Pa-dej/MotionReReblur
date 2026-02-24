@@ -11,11 +11,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import ru.motionreblur.ConfigScreen;
+import ru.motionreblur.config.ConfigScreen;
 
 @Mixin(OptionsScreen.class)
 public class MixinOptionsScreen {
-    
+
     @Inject(
         method = "init",
         at = @At(
@@ -27,7 +27,7 @@ public class MixinOptionsScreen {
     )
     private void addMotionReBlurButton(CallbackInfo ci, DirectionalLayoutWidget directionalLayoutWidget, DirectionalLayoutWidget directionalLayoutWidget2, GridWidget gridWidget, GridWidget.Adder adder) {
         MinecraftClient client = MinecraftClient.getInstance();
-        
+
         adder.add(
             ButtonWidget.builder(
                 Text.translatable("gui.motion_re_blur.button"),

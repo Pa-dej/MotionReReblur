@@ -1,4 +1,4 @@
-package ru.motionreblur;
+package ru.motionreblur.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -7,6 +7,9 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
+import ru.motionreblur.config.ConfigScreen;
+import ru.motionreblur.config.Module;
+import ru.motionreblur.util.MonitorInfoProvider;
 
 import static ru.motionreblur.MotionReBlur.mc;
 
@@ -14,8 +17,7 @@ public class Command {
 
     public static void register() {
         ClientCommandRegistrationCallback.EVENT.register(
-                (dispatcher,
-                 registryAccess) -> registerCommand(dispatcher)
+                (dispatcher, registryAccess) -> registerCommand(dispatcher)
         );
     }
 

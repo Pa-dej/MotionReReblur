@@ -4,6 +4,9 @@ import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.motionreblur.command.Command;
+import ru.motionreblur.config.Module;
+import ru.motionreblur.input.KeyBinding;
 
 public class MotionReBlur implements ClientModInitializer {
     public static final String MOD_ID = "motion_re_blur";

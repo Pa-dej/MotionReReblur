@@ -1,4 +1,7 @@
-package ru.motionreblur;
+package ru.motionreblur.config;
+
+import ru.motionreblur.MotionReBlur;
+import ru.motionreblur.shader.Shader;
 
 public class Module {
     private static final Module instance = new Module();
@@ -12,17 +15,14 @@ public class Module {
     private float handDepthThreshold;
 
     private Module() {
-        // Загружаем конфиг
         config = Config.load();
-        
-        // Применяем значения напрямую без вызова setters
+
         this.enabled = config.enabled;
         this.strength = config.strength;
         this.useRRC = config.useRRC;
         this.quality = config.quality;
         this.handDepthThreshold = config.handDepthThreshold;
-        
-        // Теперь создаем shader с уже загруженными настройками
+
         shader = new Shader(this);
     }
 
@@ -30,9 +30,6 @@ public class Module {
         return instance;
     }
 
-    /**
-     * Сохраняет текущие настройки в конфиг файл
-     */
     public void saveConfig() {
         config.copyFrom(this);
         config.save();

@@ -1,16 +1,18 @@
-package ru.motionreblur;
+package ru.motionreblur.shader;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.ladysnake.satin.api.managed.ManagedShaderEffect;
-import org.ladysnake.satin.api.managed.ShaderEffectManager;
+import ru.motionreblur.MotionReBlur;
+import ru.motionreblur.compat.IrisCompat;
+import ru.motionreblur.config.Module;
+import ru.motionreblur.util.MonitorInfoProvider;
 
 public class Shader {
     private final Module config;
-    private final ManagedShaderEffect motionBlurShader;
+    private final PostEffectShader motionBlurShader;
 
     private long lastNano = System.nanoTime();
     private float currentBlur = 0.0f;
@@ -23,12 +25,12 @@ public class Shader {
 
     public Shader(Module config) {
         this.config = config;
-        motionBlurShader = ShaderEffectManager.getInstance().manage(
+        motionBlurShader = new PostEffectShader(
                 Identifier.of(MotionReBlur.MOD_ID, "motion_blur"),
                 shader -> shader.setUniformValue("BlendFactor", config.getStrength())
         );
     }
-    
+
     public void applyMotionBlurBeforeHands() {
         long now = System.nanoTime();
         float deltaTime = (now - lastNano) / 1_000_000_000.0f;
@@ -41,7 +43,7 @@ public class Shader {
         }
 
         if (shouldRenderMotionBlur()) {
-            applyMotionBlur(); // tickDelta не используется в текущей реализации
+            applyMotionBlur();
         }
     }
 
@@ -49,16 +51,14 @@ public class Shader {
         if (config.getStrength() == 0 || !config.isEnabled()) {
             return false;
         }
-        
-        // Motion blur работает вместе с Iris
-        // Логируем только для информации
+
         if (IrisCompat.isIrisActive()) {
             String shaderPack = IrisCompat.getCurrentShaderPackName();
             if (shaderPack != null) {
                 MotionReBlur.LOGGER.debug("Motion Blur working alongside Iris shader pack: " + shaderPack);
             }
         }
-        
+
         return true;
     }
 
@@ -87,12 +87,11 @@ public class Shader {
         motionBlurShader.setUniformValue("motionBlurSamples", sampleAmount);
         motionBlurShader.setUniformValue("halfSamples", sampleAmount / 2);
         motionBlurShader.setUniformValue("inverseSamples", 1.0f / sampleAmount);
-        motionBlurShader.setUniformValue("blurAlgorithm", 1); // 1 = centered blur
+        motionBlurShader.setUniformValue("blurAlgorithm", 1);
         motionBlurShader.setUniformValue("handDepthThreshold", config.getHandDepthThreshold());
 
-        motionBlurShader.render((float) 0.0);
-        
-        // Восстанавливаем полное состояние рендеринга после применения шейдера
+        motionBlurShader.render(0.0f);
+
         RenderSystem.enableDepthTest();
         RenderSystem.depthFunc(515); // GL_LEQUAL
         RenderSystem.depthMask(true);

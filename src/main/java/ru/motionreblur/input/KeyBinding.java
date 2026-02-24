@@ -1,9 +1,10 @@
-package ru.motionreblur;
+package ru.motionreblur.input;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
+import ru.motionreblur.config.ConfigScreen;
 
 public class KeyBinding {
     private static net.minecraft.client.option.KeyBinding openGuiKey;

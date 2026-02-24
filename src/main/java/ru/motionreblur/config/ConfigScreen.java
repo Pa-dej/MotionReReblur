@@ -1,4 +1,4 @@
-package ru.motionreblur;
+package ru.motionreblur.config;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
@@ -16,8 +16,7 @@ public class ConfigScreen extends GameOptionsScreen {
     @Override
     protected void addOptions() {
         Module module = Module.getInstance();
-        
-        // Создаем опции для настроек
+
         SimpleOption<?>[] options = new SimpleOption[]{
                 createToggleOption(module),
                 createStrengthOption(module),
@@ -25,7 +24,7 @@ public class ConfigScreen extends GameOptionsScreen {
                 createRRCOption(module),
                 createHandThresholdOption(module)
         };
-        
+
         this.body.addAll(options);
     }
 
