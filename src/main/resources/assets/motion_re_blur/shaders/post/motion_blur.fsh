@@ -1,24 +1,32 @@
-#version 330 core
+#version 330
 
 uniform sampler2D MainSampler;
 uniform sampler2D MainDepthSampler;
-uniform float BlendFactor;
-uniform float inverseSamples;
-uniform vec3 cameraPos;
-uniform vec3 prevCameraPos;
-uniform vec2 view_res;
-uniform mat4 mvInverse;
-uniform mat4 projInverse;
-uniform mat4 prevModelView;
-uniform mat4 prevProjection;
-uniform int motionBlurSamples;
-uniform int halfSamples;
-uniform int blurAlgorithm;
-uniform float handDepthThreshold;
-in vec2 texCoord;
-layout(location = 0) out vec4 color;
 
-#define rcp(x) (1.0 / (x))
+layout(std140) uniform SamplerInfo {
+    vec2 OutSize;
+    vec2 MainSize;
+    vec2 MainDepthSize;
+};
+
+layout(std140) uniform MotionBlurParams {
+    mat4 mvInverse;
+    mat4 projInverse;
+    mat4 prevModelView;
+    mat4 prevProjection;
+    vec3 cameraPos;
+    vec3 prevCameraPos;
+    vec2 view_res;
+    float BlendFactor;
+    float inverseSamples;
+    float handDepthThreshold;
+    int motionBlurSamples;
+    int halfSamples;
+    int blurAlgorithm;
+};
+
+in vec2 texCoord;
+out vec4 fragColor;
 
 vec3 reproject(vec3 screen_pos) {
     vec3 ndc = screen_pos * 2.0 - 1.0;
@@ -44,15 +52,12 @@ void main() {
     ivec2 texel = ivec2(gl_FragCoord.xy);
 
     float depth = texelFetch(MainDepthSampler, texel, 0).x;
-    
-    // Исключаем руки из размытия
-    // Руки рендерятся с depth близким к 0 (очень близко к камере)
-    // Используем настраиваемый порог для точной настройки
+
     if (depth < handDepthThreshold) {
-        color = texture(MainSampler, texCoord);
+        fragColor = texture(MainSampler, texCoord);
         return;
     }
-    
+
     vec2 velocity = texCoord - reproject(vec3(texCoord, depth)).xy;
     velocity = clampLength(velocity);
 
@@ -67,14 +72,14 @@ void main() {
         float fi = float(i);
 
         float jitter = noise(seed + vec2(fi, fi * 1.4));
-        float offset_centered = fi - halfSamples;
+        float offset_centered = fi - float(halfSamples);
         float sample_index = centerBlur ? offset_centered : fi;
         float sample_offset = sample_index + jitter;
 
         vec2 pos = texCoord + sample_offset * baseStep;
-        vec3 color = texture(MainSampler, pos).rgb;
+        vec3 c = texture(MainSampler, pos).rgb;
 
-        color_sum += color * color;
+        color_sum += c * c;
     }
-    color = vec4(sqrt(color_sum * inverseSamples), 1.0);
+    fragColor = vec4(sqrt(color_sum * inverseSamples), 1.0);
 }

@@ -1,6 +1,5 @@
 package ru.motionreblur.shader;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
@@ -27,7 +26,7 @@ public class Shader {
         this.config = config;
         motionBlurShader = new PostEffectShader(
                 Identifier.of(MotionReBlur.MOD_ID, "motion_blur"),
-                shader -> shader.setUniformValue("BlendFactor", config.getStrength())
+                shader -> shader.setBlendFactor(config.getStrength())
         );
     }
 
@@ -76,27 +75,19 @@ public class Shader {
             scaledStrength = baseStrength * fpsOverRefresh;
         }
 
-        if (currentBlur != scaledStrength) {
-            motionBlurShader.setUniformValue("BlendFactor", scaledStrength);
-            currentBlur = scaledStrength;
-        }
+        motionBlurShader.setBlendFactor(scaledStrength);
+        currentBlur = scaledStrength;
 
         int sampleAmount = getSampleAmountForFPS(currentFPS);
 
-        motionBlurShader.setUniformValue("view_res", (float) client.getFramebuffer().viewportWidth, (float) client.getFramebuffer().viewportHeight);
-        motionBlurShader.setUniformValue("motionBlurSamples", sampleAmount);
-        motionBlurShader.setUniformValue("halfSamples", sampleAmount / 2);
-        motionBlurShader.setUniformValue("inverseSamples", 1.0f / sampleAmount);
-        motionBlurShader.setUniformValue("blurAlgorithm", 1);
-        motionBlurShader.setUniformValue("handDepthThreshold", config.getHandDepthThreshold());
+        motionBlurShader.setViewRes((float) client.getFramebuffer().textureWidth, (float) client.getFramebuffer().textureHeight);
+        motionBlurShader.setMotionBlurSamples(sampleAmount);
+        motionBlurShader.setHalfSamples(sampleAmount / 2);
+        motionBlurShader.setInverseSamples(1.0f / sampleAmount);
+        motionBlurShader.setBlurAlgorithm(1);
+        motionBlurShader.setHandDepthThreshold(config.getHandDepthThreshold());
 
         motionBlurShader.render(0.0f);
-
-        RenderSystem.enableDepthTest();
-        RenderSystem.depthFunc(515); // GL_LEQUAL
-        RenderSystem.depthMask(true);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
     }
 
     private int getSampleAmountForFPS(float fps) {
@@ -124,16 +115,16 @@ public class Shader {
     public void setFrameMotionBlur(Matrix4f modelView, Matrix4f prevModelView,
                                    Matrix4f projection, Matrix4f prevProjection,
                                    Vector3f cameraPos, Vector3f prevCameraPos) {
-        motionBlurShader.setUniformValue("mvInverse", tempMvInverse.set(modelView).invert());
-        motionBlurShader.setUniformValue("projInverse", tempProjInverse.set(projection).invert());
-        motionBlurShader.setUniformValue("prevModelView", tempPrevModelView.set(prevModelView));
-        motionBlurShader.setUniformValue("prevProjection", tempPrevProjection.set(prevProjection));
-        motionBlurShader.setUniformValue("cameraPos", cameraPos.x, cameraPos.y, cameraPos.z);
-        motionBlurShader.setUniformValue("prevCameraPos", prevCameraPos.x, prevCameraPos.y, prevCameraPos.z);
+        motionBlurShader.setMvInverse(tempMvInverse.set(modelView).invert());
+        motionBlurShader.setProjInverse(tempProjInverse.set(projection).invert());
+        motionBlurShader.setPrevModelView(tempPrevModelView.set(prevModelView));
+        motionBlurShader.setPrevProjection(tempPrevProjection.set(prevProjection));
+        motionBlurShader.setCameraPos(cameraPos.x, cameraPos.y, cameraPos.z);
+        motionBlurShader.setPrevCameraPos(prevCameraPos.x, prevCameraPos.y, prevCameraPos.z);
     }
 
     public void updateBlurStrength(float strength) {
-        motionBlurShader.setUniformValue("BlendFactor", strength);
+        motionBlurShader.setBlendFactor(strength);
         currentBlur = strength;
     }
 }

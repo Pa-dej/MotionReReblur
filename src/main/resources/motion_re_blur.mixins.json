@@ -6,9 +6,11 @@
   "priority": 1100,
   "client": [
     "GameRendererAccessor",
+    "GlGpuBufferAccessor",
     "MixinGameRenderer",
     "MixinLevelRenderer",
     "MixinOptionsScreen",
+    "PostEffectPassAccessor",
     "PostEffectProcessorAccessor",
     "ShaderLoaderAccessor"
   ],
