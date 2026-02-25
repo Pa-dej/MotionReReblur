@@ -4,7 +4,7 @@
   },
   "passes": [
     {
-      "vertex_shader": "minecraft:core/screenquad",
+      "vertex_shader": "minecraft:post/screenquad",
       "fragment_shader": "motion_re_blur:post/motion_blur",
       "inputs": [
         {
@@ -37,7 +37,7 @@
       }
     },
     {
-      "vertex_shader": "minecraft:core/screenquad",
+      "vertex_shader": "minecraft:post/screenquad",
       "fragment_shader": "minecraft:post/blit",
       "inputs": [
         {

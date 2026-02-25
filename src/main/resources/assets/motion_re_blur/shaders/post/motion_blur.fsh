@@ -1,13 +1,7 @@
-#version 330
+#version 150
 
 uniform sampler2D MainSampler;
 uniform sampler2D MainDepthSampler;
-
-layout(std140) uniform SamplerInfo {
-    vec2 OutSize;
-    vec2 MainSize;
-    vec2 MainDepthSize;
-};
 
 layout(std140) uniform MotionBlurParams {
     mat4 mvInverse;

@@ -23,7 +23,7 @@ public class MixinLevelRenderer {
     private Vector3f prevCameraPos = new Vector3f();
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void setMatrices(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, Matrix4f positionMatrix, Matrix4f projectionMatrix, Matrix4f viewMatrix, GpuBufferSlice fog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
+    private void setMatrices(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, Matrix4f positionMatrix, Matrix4f projectionMatrix, GpuBufferSlice fog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
         float tickDelta = tickCounter.getTickProgress(true);
         GameRenderer gameRenderer = net.minecraft.client.MinecraftClient.getInstance().gameRenderer;
         float fov = ((GameRendererAccessor) gameRenderer).invokeGetFov(camera, tickDelta, true);
@@ -40,7 +40,7 @@ public class MixinLevelRenderer {
     }
 
     @Inject(method = "render", at = @At("RETURN"))
-    private void setOldMatrices(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, Matrix4f positionMatrix, Matrix4f projectionMatrix, Matrix4f viewMatrix, GpuBufferSlice fog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
+    private void setOldMatrices(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, Matrix4f positionMatrix, Matrix4f projectionMatrix, GpuBufferSlice fog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
         prevModelView = new Matrix4f(positionMatrix);
         GameRenderer gameRenderer = net.minecraft.client.MinecraftClient.getInstance().gameRenderer;
         float tickDelta = tickCounter.getTickProgress(true);
